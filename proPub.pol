@@ -1,0 +1,14 @@
+list classifications [ protect, restricted, confidential, secret, topSecret ];
+polist classifications2 [ protected, (secret, otherSecret), topSecret ];
+for all (process used data) where (data.cost >13 (def false)) setSensitivity(process,5);
+for all (process used data) where (data.cost >15 (def false)) setSensitivity(process,8);
+for all (process used data) where (data.cost >15 (def false)) addToSet(process,expensiveProcess);
+for all (data wgb process) where ( process.classification > confidential in classifications ) setSensitivity(data, 7);
+for all (data wgb process) where ( process memberOf expensiveProcess) setUtility(data, 5);
+for all (data wgb process) where ( process notMemberOf expensiveProcess) setUtility(data, 2);
+
+for all (process used data) where ((( process memberOf expensiveProcess) and (data.cost >16 (def false))) or (data.cost == 11 (def false))) setSensitivity(data, 15); 
+
+for all (process used data) where (data descendantOf d14 (def false)) setSensitivity(data, 20);
+for all (node) where ((node descendantOf d11 (def false)) and (not(node ancestorOf d19 (def false))))setSensitivity(node, 21);
+

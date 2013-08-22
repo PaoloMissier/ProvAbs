@@ -1,0 +1,5 @@
+list classifications [Unclassified, Classified, protected, secret];
+
+for all (act used data) where (data.Status >= secret in classifications) setSensitivity(act, 7); 
+
+for all (act used data) where (data.Status <= Classified in classifications) setSensitivity(act, 4);

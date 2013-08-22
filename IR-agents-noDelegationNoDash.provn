@@ -1,0 +1,199 @@
+document
+
+prefix xsd <http://www.w3.org/2001/XMLSchema>
+prefix prim <http://openprovenance.org/primitives#>
+prefix prov <http://www.w3.org/ns/prov#>
+prefix xsi <http://www.w3.org/2001/XMLSchema-instance>
+prefix pc1 <http://www.ipaw.info/pc1/>
+
+prefix ir <http://www.ir.ncl.ac.uk/>
+
+//
+// entities
+//
+
+// Twitter Feed
+entity(TwitterFeedTime1, [from="2012-09-27T09:00:00", to="2012-10-27T09:30:00", Status="Unclassified"])
+entity(TwitterFeedTime2, [from="2012-12-28T09:00:00", to="2013-01-28T09:30:00", Status="Unclassified"]) 
+entity(TwitterFeedTime3, [from="2013-02-29T09:00:00", to="2013-03-29T09:30:00", Status="Unclassified"])
+
+// Y data
+entity(YTweets1)
+entity(YTweets2)
+entity(YTweets3)
+
+// X: data
+entity(XTweets1)
+entity(XTweets2)
+entity(XTweets3)
+
+// classified information
+
+entity(YProfile, [Status="secret"])
+entity(XProfile, [Status="secret"])
+
+
+// merging algorithm hidden as the tool does not yet do three way relations
+//entity(merging-algorithm, [prov:type="plan"])
+
+
+// summaries
+
+entity(YSummary, [Status="secret"])
+entity(XSummary, [Status="secret"])
+
+// intermediate merged results
+
+entity(report1)
+entity(report2)
+entity(report3)
+
+// final results
+
+entity(adviceReport)
+
+//
+// activities
+//
+
+// Y: extraction
+
+activity(queryYTime1, [Status="protected"])
+activity(queryYTime2, [Status="secret"])
+activity(queryYTime3, [Status="protected"])
+
+// X: extraction
+activity(queryXTime1, [Status="protected"])
+activity(queryXTime2, [Status="protected"])
+activity(queryXTime3, [Status="protected"])
+
+wasAssociatedWith(queryYTime1, twitterMonitor,-)
+wasAssociatedWith(queryYTime2, twitterMonitor,-)
+wasAssociatedWith(queryYTime3, twitterMonitor,-)
+wasAssociatedWith(queryXTime1, twitterMonitor,-)
+wasAssociatedWith(queryXTime2, twitterMonitor,-)
+wasAssociatedWith(queryXTime3, twitterMonitor,-)
+
+// merging
+
+activity(consolidateY, [Status="protected"])
+activity(consolidateX, [Status="protected"])
+activity(reportEditing, [Status="protected"])
+
+// analytics activity
+
+activity(analytics1, [Status="protected"])
+activity(analytics2, [Status="confidential"])
+activity(analytics3, [Status="secret"])
+
+
+
+
+//
+// agents
+//
+agent(Alice, [prov:type="jr-analyst", clearance="low"])
+agent(Bob, [prov:type="analyst", clearance="high"])
+agent(Charlie, [prov:type="sr-analyst", clearance="high"])
+//agent(David, [prov:type="head-analyst", clearance="high"])
+
+agent(K, [prov:type="jr-editor", clearance="normal"])
+//agent(L, [prov:type="sr-editor", clearance="high"])
+//agent(M, [prov:type="numero-uno", clearance="top"])
+
+agent(twitterMonitor,  [prov:type="Sw-component"])
+
+
+//actedOnBehalfOf(Alice, David, analytics1)
+//actedOnBehalfOf(Bob, David, analytics2)
+//actedOnBehalfOf(Charlie, David, analytics3)
+
+// attributions and associations, delegation
+wasAssociatedWith(reportEditing, K,-)
+//actedOnBehalfOf(K, L, report-editing)
+
+//actedOnBehalfOf(Alice, M)
+//actedOnBehalfOf(Bob, M)
+//actedOnBehalfOf(Charlie, M)
+//actedOnBehalfOf(David, M)
+//actedOnBehalfOf(K, M)
+//actedOnBehalfOf(L, M)
+
+
+// three way relations not supported yet.. reduced to two way relations
+// wasAssociatedWith(consolidate-Y, Charlie, merging-algorithm)
+// wasAssociatedWith(consolidate-X, Charlie, merging-algorithm)
+wasAssociatedWith(consolidateY, Charlie)
+wasAssociatedWith(consolidateX, Charlie)
+
+
+
+
+wasAssociatedWith(analytics1, Alice,-)
+wasAssociatedWith(analytics2, Bob,-)
+wasAssociatedWith(analytics3, Charlie,-)
+
+
+// initial extraction activity
+
+used(queryYTime1,TwitterFeedTime1,-)
+used(queryYTime2,TwitterFeedTime2,-)
+used(queryYTime3,TwitterFeedTime3,-)
+used(queryXTime1,TwitterFeedTime1,-)
+used(queryXTime2,TwitterFeedTime2,-)
+used(queryXTime3,TwitterFeedTime3,-)
+
+// initial extraction results
+
+wasGeneratedBy(YTweets1,queryYTime1,2013-06-18T11:10:00)
+wasGeneratedBy(YTweets2,queryYTime2,2013-06-18T11:10:00)
+wasGeneratedBy(YTweets3,queryYTime3,2013-06-18T11:10:00)
+wasGeneratedBy(XTweets1,queryXTime1,2013-06-18T11:10:00)
+wasGeneratedBy(XTweets2,queryXTime2,2013-06-18T11:10:00)
+wasGeneratedBy(XTweets3,queryXTime3,2013-06-18T11:10:00)
+
+// merging
+
+used(consolidateY,YTweets1,-)
+used(consolidateY,YTweets2,-)
+used(consolidateY,YTweets3,-)
+used(consolidateY,YProfile,-)
+
+used(consolidateX,XTweets1,-)
+used(consolidateX,XTweets2,-)
+used(consolidateX,XTweets3,-)
+used(consolidateX,XProfile,-)
+
+
+// merge generates
+
+wasGeneratedBy(YSummary,consolidateY,2013-06-18T11:10:00)
+wasGeneratedBy(XSummary,consolidateX,2013-06-18T11:10:00)
+
+// analytics uses
+ 
+used(analytics1,YSummary,-)
+used(analytics1,XSummary,-)
+used(analytics2,YSummary,-)
+used(analytics2,XSummary,-)
+used(analytics3,YSummary,-)
+used(analytics3,XSummary,-)
+
+// analytics generates
+
+wasGeneratedBy(report1,analytics1,2013-06-18T11:10:00)
+wasGeneratedBy(report2,analytics2,2013-06-18T11:10:00)
+wasGeneratedBy(report3,analytics3,2013-06-18T11:10:00)
+
+// final merging
+
+used(reportEditing,report1,-)
+used(reportEditing,report2,-)
+used(reportEditing,report3,-)
+
+// generating the final result
+
+wasGeneratedBy(adviceReport, reportEditing, 2013-06-18T11:10:00)
+
+
+endDocument
